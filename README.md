@@ -2,11 +2,11 @@
 
 ## 1. Problem Motivation
 
-From my professional experience, I got an opportunity to look at certain parametric insurance products and how they differ from traditional insurance products. I got an opportunity to look at the monitoring of these portfolios but did not get a chance to price them. Parametric insurance products are increasingly used to provide faster payouts and claim settlements based on observable triggers such as rainfall levels. 
+From my professional experience, I got an opportunity to look at certain parametric insurance products and how they differ from traditional insurance products. I got an opportunity to look at the monitoring of these portfolios, but did not get a chance to price them. Parametric insurance products are increasingly used to provide faster payouts and claim settlements based on observable triggers such as rainfall levels. 
 
 To further research more on how these products are priced, I used a parametric rainfall product and tried simualting insurance losses over a period of one year using time series and stochastic models. However, unlike traditional insurance, payouts depend on an index rather than actual losses, making the modelling of the underlying variable critical.
 
-Rainfall behaviour is extremely uncertain and often exhibits variability that is not easy to capture using deterministic assumptions. This creates challenges in designing triggers and understanding the distribution of potential payouts. There is basis risk in these parametric insurance products and it is difficult to model them. 
+Rainfall behaviour is extremely uncertain and often exhibits variability that is not easy to capture using deterministic assumptions. This creates challenges in designing triggers and understanding the distribution of potential payouts. There is basis risk in these parametric insurance products, and it is difficult to model them. 
 
 This project explores how rainfall distributions and stochastic simulation can be used to model losses in a parametric insurance framework.
 
@@ -14,13 +14,13 @@ This project explores how rainfall distributions and stochastic simulation can b
 
 ## 2. Objective
 
-To model rainfall amounts using statistical distirbutions like Tweedie & Gamma and simulate rainfall paths in order to estimate the distirbution of insurance payouts under a parametric rainfall policy.
+To model rainfall amounts using statistical distributions like Tweedie & Gamma and simulate rainfall paths in order to estimate the distribution of insurance payouts under a parametric rainfall policy.
 
 ---
 
 ## 3. Data & Inputs
 
-- Historical daliy rainfall data (Miami, FL) for the past 30 years from 1995 to 2024. 
+- Historical daily rainfall data (Miami, FL) for the past 30 years from 1995 to 2024. 
 
 ---
 
@@ -29,15 +29,15 @@ To model rainfall amounts using statistical distirbutions like Tweedie & Gamma a
 ### Rainfall Distribution Modelling
 - 30 years of daily rainfall data analysed to fit Tweedie and Gamma distributions
 - Compare the fit of Gamma and Tweedie to select the distribution
-- Distribution selection based on ability to capture observed variability and skewness
-- Calibration of parameters for Tweedie distribution
-- Bootstrapped K-S test for evaluating the fit of Tweedie distribution  
+- Distribution selection based on the ability to capture observed variability and skewness
+- Calibration of parameters for the Tweedie distribution
+- Bootstrapped K-S test for evaluating the fit of the Tweedie distribution  
 
 ---
 
 ### Stochastic Rainfall Simulation
-- Time Series model used to simulate the parameter $\mu_{t}$ of the Tweedie distribution for each day for the next one year
-- Using the simulated $\mu_{t}$ path to generate a random value from Tweedie distribution with parameter $\mu_{t}$, $p$, and $\phi$. Parmaeters $p$ and $\phi$ are kept fixed across all days and paths and calibrated in the first notebook
+- AR(1) Time Series model used to simulate the parameter $\mu_{t}$ of the Tweedie distribution for each day for the next one year
+- Using the simulated $\mu_{t}$ path to generate a random value from the Tweedie distribution with parameter $\mu_{t}$, $p$, and $\phi$. Parameters $p$ and $\phi$ are kept fixed across all days and paths and calibrated in the first notebook
 - Multiple simulation paths generated to capture variability in rainfall outcomes  
 
 ---
@@ -51,8 +51,8 @@ To model rainfall amounts using statistical distirbutions like Tweedie & Gamma a
 
 ## 5. Key Insights
 
-- The choice of probability distribution plays an important role in capturing tai behaviour along with calibration of the distribution
-- The fitted Tweedie distribution has heavy tails which over estimates rainfall on a given day - a better approach would be to model occurence of rainfall and rainfall instensity using separate distributions
+- The choice of probability distribution plays an important role in capturing tail behaviour, along with calibration of the distribution
+- The fitted Tweedie distribution has heavy tails, which overestimate rainfall on a given day - a better approach would be to model the occurrence of rainfall and rainfall intensity using separate distributions
 - Rainfall variability leads to a wide distribution of possible payouts, even under similar average conditions  
 - Small changes in trigger thresholds and exit points can significantly impact expected losses on the insurance policy  
 
