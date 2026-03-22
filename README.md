@@ -2,67 +2,109 @@
 
 ## 1. Problem Motivation
 
-From my professional experience, I got an opportunity to look at certain parametric insurance products and how they differ from traditional insurance products. I got an opportunity to look at the monitoring of these portfolios, but did not get a chance to price them. Parametric insurance products are increasingly used to provide faster payouts and claim settlements based on observable triggers such as rainfall levels. 
+Parametric Insurance is a non-traditional insurance product that pays out an agreed sum based on the magnitude of a specific, pre-defined event (like earthquake or excessive rainfall), rather than on actual assessed incurred losses. 
 
-To further research more on how these products are priced, I used a parametric rainfall product and tried simualting insurance losses over a period of one year using time series and stochastic models. However, unlike traditional insurance, payouts depend on an index rather than actual losses, making the modelling of the underlying variable critical.
+From my professional experience, I got an opportunity to look at certain parametric insurance products and how they differ from traditional insurance products. I observed several challenges when modelling these products. Parametric insurance products are increasingly used to provide faster payouts and claim settlements based on observable triggers such as rainfall levels. Unlike traditional insurance, payouts depend on an index rather than actual losses, making the modelling of the underlying variable critical. 
 
-Rainfall behaviour is extremely uncertain and often exhibits variability that is not easy to capture using deterministic assumptions. This creates challenges in designing triggers and understanding the distribution of potential payouts. There is basis risk in these parametric insurance products, and it is difficult to model them. 
+Rainfall based parametric products present challenges because the daily rainfall exhibit several non-trivial features like:
+- zero inflation (most days have 0 precipitaion)
+- temporal dependence (wet and dry spells)
+- heavy-tailed distributions (to model extreme rainfall events)
+- seasonal variation in mean levels
 
-This project explores how rainfall distributions and stochastic simulation can be used to model losses in a parametric insurance framework.
+Standard deterministic or single-distribution approaches are insufficient to capture these characteristics simultaneously. This creates model risk in estimating payout distributions, particularly in the tails where insurance losses are concentrated.
+
+Motivated by this, the project evaluates alternative stochastic frameworks for modelling rainfall and examines their implications for parametric insurance pricing.
 
 ---
 
 ## 2. Objective
 
-To model rainfall amounts using statistical distributions like Tweedie & Gamma and simulate rainfall paths in order to estimate the distribution of insurance payouts under a parametric rainfall policy.
+To assess how different stochastic representations of rainfall process impact the distribution of parametric insurance losses by comparing two approaches:
+    - **Approach A**: A Tweedie distribution fitted to all rainfall data including dry days, with the mean parameter varying daily through an AR(1) driven process capturing temporal dependence in rainfall amounts
+    - **Approach B**: Decomposes rainfall into occurrence and intensity. A Markov Chain models whether it rains on a given day, capturing wet day persistence, and a Gamma distribution models rainfall intensity on wet days with a time varying scale parameter driven by the same AR(1) mean paths as Approach A.
 
 ---
 
 ## 3. Data & Inputs
 
-- Historical daily rainfall data (Miami, FL) for the past 30 years from 1995 to 2024. 
+- Historical daliy rainfall data (Miami, FL) for the past 22 years from 2003 to 2024. 
 
 ---
 
 ## 4. Modelling Approach
 
 ### Rainfall Distribution Modelling
-- 30 years of daily rainfall data analysed to fit Tweedie and Gamma distributions
-- Compare the fit of Gamma and Tweedie to select the distribution
-- Distribution selection based on the ability to capture observed variability and skewness
-- Calibration of parameters for the Tweedie distribution
-- Bootstrapped K-S test for evaluating the fit of the Tweedie distribution  
+
+- Fitting necessary distributions required in both approaches
+- **Approach A**: Tweedie Distribution fitted to all rainfall data:
+    - 22 years of daily rainfall data analysed to fit Tweedie and Gamma distributions
+    - Compare the fit of Gamma and Tweedie to select the distribution
+    - Distribution selection based on ability to capture observed variability and skewness
+    - Calibration of parameters for Tweedie distribution
+    - Bootstrapped K-S test for evaluating the fit of Tweedie distribution  
+- **Approach B**: Occurrence/Severity Framework:
+    - Markov Chain Transition Matrix fit on historical rainfall data
+    - Gamma distribution fit on non-zero rainfall amounts
+    - Fit of the Gamma distribution assessed using QQ-plot  
 
 ---
 
 ### Stochastic Rainfall Simulation
-- AR(1) Time Series model used to simulate the parameter $\mu_{t}$ of the Tweedie distribution for each day for the next one year
-- Using the simulated $\mu_{t}$ path to generate a random value from the Tweedie distribution with parameter $\mu_{t}$, $p$, and $\phi$. Parameters $p$ and $\phi$ are kept fixed across all days and paths and calibrated in the first notebook
-- Multiple simulation paths generated to capture variability in rainfall outcomes  
+- Simulating paths for the mean of the distribution of daily rainfall using the stochastic process: 
+
+<div align="center">
+
+$\mu_{t} = \bar{\mu_{t}} + X_{t}$. $\bar{\mu_{t}}$ is the observed average daily rainfall across 22 years data
+
+</div>
+
+- Fitting a AR(1) time series to $X_{t}$ and then simulating paths for $\mu_{t}$
+-  Using these $\mu_{t}$ paths, we simulate rainfall on a given day using two approaches:
+    - **Approach A**: Simulate daily rainfall from a Tweedie distribution using time varying $\mu_{t}$ while keeping the power parameter and $\phi$ fixed
+    - **Approach B**: Uses a Markov Chain to decide whether it rains on a given day and then draws rainfall intensity from a Gamma distribution with a time varying scale parameter calibrated to the conditional mean on wet days.
 
 ---
 
 ### Insurance Loss Modelling
 - Parametric insurance structure is defined using thresholds from observed rainfall data
 - Payouts triggered when rainfall exceeds a predefined threshold
-- Losses calculated across simulated rainfall paths  
+- Losses calculated across simulated rainfall paths for both the approaches
+- Sensitivity to triggers is tested
 
 ---
 
 ## 5. Key Insights
 
-- The choice of probability distribution plays an important role in capturing tail behaviour, along with calibration of the distribution
-- The fitted Tweedie distribution has heavy tails, which overestimate rainfall on a given day - a better approach would be to model the occurrence of rainfall and rainfall intensity using separate distributions
-- Rainfall variability leads to a wide distribution of possible payouts, even under similar average conditions  
-- Small changes in trigger thresholds and exit points can significantly impact expected losses on the insurance policy  
+- Key results from the simulations are summarized below:
+
+| | Tweedie | Occurrence/Gamma |
+|---|---|---|
+| Expected Annual Loss | $23,499 | $25,079 |
+| Model Difference | 6.7% | |
+| Trigger Exceedance | 33.9% | 35.7% |
+
+- The close agreement in expected losses masks important structural differences between the two approaches
+- The Tweedie approach:
+    - Provides a better overall fit to rainfall distribution
+    - Captures aggregate behaviour more effectively
+    - Slightly overestimates the mean rainfall
+- The Occurrence/Gamma approach:
+    - Tracks conditional mean behaviour more accurately
+    - Underestimates extreme rainfall events due to fixed shape parameter assumptions
+- From an insurance perspective:
+    - Similar expected losses may still lead to different tail risk profiles
+    - Underestimation of extremes can result in systematic underpricing for high-trigger contracts
+- Small changes in trigger thresholds materially impact expected losses, emphasising the importance of contract design alongside model choice
 
 ---
 
 ## 6. Limitations
 
-- Model assumes independence in rainfall across periods  
-- The model does not explicitly capture extreme weather dynamics or climate trends  
-- Basis risk (difference between actual loss and index payout) is not explicitly analysed  
+- Monthly alpha estimation showed shape parameter is stable across seasons 
+- AR(1) assumes Gaussian innovations which may underestimate extreme rainfall deviations
+- Basis risk (difference between actual loss and index payout) is not explicitly modelled  
+- Analysis uses a single weather station and does not capture spatial rainfall dependence across the region
 
 ---
 
@@ -76,7 +118,7 @@ To model rainfall amounts using statistical distributions like Tweedie & Gamma a
 
 ## 9. Takeaway
 
-This project emphasizes how crucial distributional assumptions and stochastic simulation are when modeling parametric insurance products, especially when it comes to capturing tail risk and uncertainty in climate driven occurrences. The project could be extended to model a wide range of climate risks.
+This project demonstrates that in parametric insurance, modelling the underlying stochastic process is central to pricing accuracy. Even when different models produce similar expected losses, their assumptions can lead to materially different representations of risk, particularly in the tails. The project could be extended to model a wide range of climate risks.
 
 ---
 
