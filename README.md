@@ -1,4 +1,4 @@
-# Parametric Rainfall Insurance — Stochastic Loss Simulation for Weather-Linked Products 
+# Parametric Rainfall Insurance — Stochastic Loss Simulation for Weather-Linked Products
 
 ## 1. Problem Motivation
 
@@ -74,7 +74,25 @@ $\mu_{t} = \bar{\mu_{t}} + X_{t}$. where, $\bar{\mu_{t}}$ is the observed averag
 
 ---
 
-## 5. Key Insights
+## 5. Results & Visualisation
+
+### Rainfall Simulation under Alternative Modelling Approaches
+
+![Rainfall Simulation](./images/rainfall_simulation.png)
+
+The two modelling approaches produce similar mean rainfall paths but differ significantly in their variability and tail behaviour. The Tweedie model captures aggregate behaviour, while the occurrence-based model introduces state-dependent variability through wet/dry seasons.
+
+### Impact on Insurance Loss Distribution
+
+![Loss Distribution](./images/loss_distribution.png)
+
+Despite similar expected losses, the two approaches produce materially different loss distributions. The occurrence-based model underestimates extreme rainfall events, leading to thinner tails, while the Tweedie approach captures higher variability in aggregate losses.
+
+This highlights that model choice directly impacts tail risk estimation and can lead to systematic underpricing of high-trigger contracts.
+
+---
+
+## 6. Key Insights
 
 - Key results from the simulations are summarised below:
 
@@ -99,7 +117,7 @@ $\mu_{t} = \bar{\mu_{t}} + X_{t}$. where, $\bar{\mu_{t}}$ is the observed averag
 
 ---
 
-## 6. Limitations
+## 7. Limitations
 
 - Monthly alpha estimation showed the shape parameter is stable across seasons 
 - AR(1) assumes Gaussian innovations, which may underestimate extreme rainfall deviations
@@ -129,4 +147,3 @@ This project demonstrates that in parametric insurance, modelling the underlying
 ## How to Run
 
 Run the notebooks in order: `01` → `02` → `03`. Notebook 03 imports functions from notebooks 01 and 02 `import_ipynb`.
-
