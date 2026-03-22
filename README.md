@@ -6,8 +6,8 @@ Parametric Insurance is a non-traditional insurance product that pays out an agr
 
 From my professional experience, I got an opportunity to look at certain parametric insurance products and how they differ from traditional insurance products. I observed several challenges when modelling these products. Parametric insurance products are increasingly used to provide faster payouts and claim settlements based on observable triggers such as rainfall levels. Unlike traditional insurance, payouts depend on an index rather than actual losses, making the modelling of the underlying variable critical. 
 
-Rainfall based parametric products present challenges because the daily rainfall exhibit several non-trivial features like:
-- zero inflation (most days have 0 precipitaion)
+Rainfall-based parametric products present challenges because the daily rainfall exhibits several non-trivial features like:
+- zero inflation (most days have 0 precipitation)
 - temporal dependence (wet and dry spells)
 - heavy-tailed distributions (to model extreme rainfall events)
 - seasonal variation in mean levels
@@ -20,15 +20,15 @@ Motivated by this, the project evaluates alternative stochastic frameworks for m
 
 ## 2. Objective
 
-To assess how different stochastic representations of rainfall process impact the distribution of parametric insurance losses by comparing two approaches:
-    - **Approach A**: A Tweedie distribution fitted to all rainfall data including dry days, with the mean parameter varying daily through an AR(1) driven process capturing temporal dependence in rainfall amounts
-    - **Approach B**: Decomposes rainfall into occurrence and intensity. A Markov Chain models whether it rains on a given day, capturing wet day persistence, and a Gamma distribution models rainfall intensity on wet days with a time varying scale parameter driven by the same AR(1) mean paths as Approach A.
+To assess how different stochastic representations of the rainfall process impact the distribution of parametric insurance losses by comparing two approaches:
+- **Approach A**: A Tweedie distribution fitted to all rainfall data, including dry days, with the mean parameter varying daily through an AR(1) driven process capturing temporal dependence in rainfall amounts
+- **Approach B**: Decomposes rainfall into occurrence and intensity. A Markov Chain model determines whether it rains on a given day, capturing wet day persistence, and a Gamma distribution models rainfall intensity on wet days with a time-varying scale parameter driven by the same AR(1) mean paths as Approach A.
 
 ---
 
 ## 3. Data & Inputs
 
-- Historical daliy rainfall data (Miami, FL) for the past 22 years from 2003 to 2024. 
+- Historical daily rainfall data (Miami, FL) for the past 22 years from 2003 to 2024. 
 
 ---
 
@@ -36,13 +36,13 @@ To assess how different stochastic representations of rainfall process impact th
 
 ### Rainfall Distribution Modelling
 
-- Fitting necessary distributions required in both approaches
+- Fitting the necessary distributions required in both approaches
 - **Approach A**: Tweedie Distribution fitted to all rainfall data:
     - 22 years of daily rainfall data analysed to fit Tweedie and Gamma distributions
     - Compare the fit of Gamma and Tweedie to select the distribution
-    - Distribution selection based on ability to capture observed variability and skewness
-    - Calibration of parameters for Tweedie distribution
-    - Bootstrapped K-S test for evaluating the fit of Tweedie distribution  
+    - Distribution selection based on the ability to capture observed variability and skewness
+    - Calibration of parameters for the Tweedie distribution
+    - Bootstrapped K-S test for evaluating the fit of the Tweedie distribution  
 - **Approach B**: Occurrence/Severity Framework:
     - Markov Chain Transition Matrix fit on historical rainfall data
     - Gamma distribution fit on non-zero rainfall amounts
@@ -55,28 +55,28 @@ To assess how different stochastic representations of rainfall process impact th
 
 <div align="center">
 
-$\mu_{t} = \bar{\mu_{t}} + X_{t}$. $\bar{\mu_{t}}$ is the observed average daily rainfall across 22 years data
+$\mu_{t} = \bar{\mu_{t}} + X_{t}$. where, $\bar{\mu_{t}}$ is the observed average daily rainfall across 22 years data
 
 </div>
 
 - Fitting a AR(1) time series to $X_{t}$ and then simulating paths for $\mu_{t}$
 -  Using these $\mu_{t}$ paths, we simulate rainfall on a given day using two approaches:
     - **Approach A**: Simulate daily rainfall from a Tweedie distribution using time varying $\mu_{t}$ while keeping the power parameter and $\phi$ fixed
-    - **Approach B**: Uses a Markov Chain to decide whether it rains on a given day and then draws rainfall intensity from a Gamma distribution with a time varying scale parameter calibrated to the conditional mean on wet days.
+    - **Approach B**: Uses a Markov Chain to decide whether it rains on a given day and then draws rainfall intensity from a Gamma distribution with a time-varying scale parameter calibrated to the conditional mean on wet days.
 
 ---
 
 ### Insurance Loss Modelling
 - Parametric insurance structure is defined using thresholds from observed rainfall data
 - Payouts triggered when rainfall exceeds a predefined threshold
-- Losses calculated across simulated rainfall paths for both the approaches
+- Losses calculated across simulated rainfall paths for both approaches
 - Sensitivity to triggers is tested
 
 ---
 
 ## 5. Key Insights
 
-- Key results from the simulations are summarized below:
+- Key results from the simulations are summarised below:
 
 | | Tweedie | Occurrence/Gamma |
 |---|---|---|
@@ -101,8 +101,8 @@ $\mu_{t} = \bar{\mu_{t}} + X_{t}$. $\bar{\mu_{t}}$ is the observed average daily
 
 ## 6. Limitations
 
-- Monthly alpha estimation showed shape parameter is stable across seasons 
-- AR(1) assumes Gaussian innovations which may underestimate extreme rainfall deviations
+- Monthly alpha estimation showed the shape parameter is stable across seasons 
+- AR(1) assumes Gaussian innovations, which may underestimate extreme rainfall deviations
 - Basis risk (difference between actual loss and index payout) is not explicitly modelled  
 - Analysis uses a single weather station and does not capture spatial rainfall dependence across the region
 
