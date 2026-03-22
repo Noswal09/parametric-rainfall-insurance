@@ -1,4 +1,6 @@
-# Parametric Rainfall Insurance — Stochastic Loss Simulation for Weather-Linked Products 1. Problem Motivation
+# Parametric Rainfall Insurance — Stochastic Loss Simulation for Weather-Linked Products 
+
+## 1. Problem Motivation
 
 Parametric Insurance is a non-traditional insurance product that pays out an agreed sum based on the magnitude of a specific, pre-defined event (like earthquake or excessive rainfall), rather than on actual assessed incurred losses. 
 
